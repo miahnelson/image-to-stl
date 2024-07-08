@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to STL Converter</title>
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1 class="title">Image to STL Converter</h1>
+    <div class="container">
+        <div class="form-container">
+            <form id="upload-form" action="/" method="post" enctype="multipart/form-data">
+                <div class="form-group" id="file-upload">
+                    <label for="file">Upload Image</label>
+                    <input type="file" name="file" id="file" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="max_depth">Max Depth (default: {{ config.MAX_DEPTH }})</label>
+                    <span id="max_depth_value">{{ config.MAX_DEPTH }}</span>
+                    <input type="range" name="max_depth" id="max_depth" value="{{ config.MAX_DEPTH }}" min="1" max="10" step="1" oninput="document.getElementById('max_depth_value').innerText = this.value" required>
+                </div>
+                <div class="form-group">
+                    <label for="base_thickness">Base Thickness (default: {{ config.BASE_THICKNESS }})</label>
+                    <span id="base_thickness_value">{{ config.BASE_THICKNESS }}</span>
+                    <input type="range" name="base_thickness" id="base_thickness" value="{{ config.BASE_THICKNESS }}" min="1" max="5" step="1" oninput="document.getElementById('base_thickness_value').innerText = this.value" required>
+                </div>
+                <div class="form-group">
+                    <label for="output_width" id="output_width_label">Output Width in pixels (default: {{ config.OUTPUT_WIDTH }})</label>
+                    <span id="output_width_value">{{ config.OUTPUT_WIDTH }}</span>
+                    <input type="range" name="output_width" id="output_width" value="{{ config.OUTPUT_WIDTH }}" min="100" max="2000" step="1" oninput="document.getElementById('output_width_value').innerText = this.value; updateOutputWidthLabel();" required>
+                </div>
+                <div class="form-group">
+                    <label for="resolution">Resolution (default: {{ config.RESOLUTION }})</label>
+                    <span id="resolution_value">{{ config.RESOLUTION }}</span>
+                    <input type="range" name="resolution" id="resolution" value="{{ config.RESOLUTION }}" min="0.1" max="10" step="0.1" oninput="document.getElementById('resolution_value').innerText = this.value" required>
+                </div>
+                <div class="form-group">
+                    <label for="smoothness">Smoothness (default: {{ config.SMOOTHNESS }})</label>
+                    <span id="smoothness_value">{{ config.SMOOTHNESS }}</span>
+                    <input type="range" name="smoothness" id="smoothness" value="{{ config.SMOOTHNESS }}" min="1" max="20" step="1" oninput="document.getElementById('smoothness_value').innerText = this.value" required>
+                </div>
+                <div class="form-group">
+                    <label for="top_surface_smoothness">Top Surface Smoothness (default: {{ config.TOP_SURFACE_SMOOTHNESS }})</label>
+                    <span id="top_surface_smoothness_value">{{ config.TOP_SURFACE_SMOOTHNESS }}</span>
+                    <input type="range" name="top_surface_smoothness" id="top_surface_smoothness" value="{{ config.TOP_SURFACE_SMOOTHNESS }}" min="1" max="20" step="1" oninput="document.getElementById('top_surface_smoothness_value').innerText = this.value" required>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="invert" id="invert" {{ 'checked' if config.INVERT else '' }}>
+                        <span>Invert</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="grayscale" id="grayscale" checked="{{ 'checked' if config.GRAY_SCALE else '' }}">
+                        <span>Convert to Grayscale</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="repair_mesh" id="repair_mesh" checked="checked">
+                        <span>Repair Mesh</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn waves-effect waves-light">Generate STL</button>
+                </div>
+            </form>
+        </div>
+        <div class="viewer-container">
+            <img id="image-preview" src="#" alt="Image preview" style="display:none; width: 100%; height: auto;">
+            <a id="download-link" class="btn waves-effect waves-light" style="display:none;">Download STL</a>
+            <button id="view-stl-button" class="btn waves-effect waves-light" style="display:none;" onclick="viewStl()">View STL</button>
+        </div>
+    </div>
+    <div class="terminal" id="terminal"></div>
+    <div class="processing-animation" id="processing-animation">
+        <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div><div class="gap-patch">
+                    <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
